@@ -1,26 +1,39 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Feed from './Feed';
+import Snoowrap from 'snoowrap';
 
 const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    const [posts, setPosts] = React.useState<Snoowrap.Listing<Snoowrap.Submission>>();
+
+    React.useEffect(() => {
+        const reddit = new Snoowrap({
+            clientId: 'o4GxPeMIHdlxdg',
+            clientSecret: 'jK-vd2bFZT3UMNHPqAJyCo-B56Q',
+            userAgent: 'testing',
+            refreshToken: '31812939-MbNY90Or6q4M554sVPZe1BIT6aM',
+        });
+
+        reddit
+            .getSubreddit('DnDIY')
+            .getHot()
+            .then((posts: Snoowrap.Listing<Snoowrap.Submission>) => {
+                // do something with posts
+                setPosts(posts);
+                console.log(posts);
+            });
+    }, []);
+
+    return (
+        <div className="App">
+            <header className="App-header" style={{ backgroundColor: 'cadetblue', width: '100%' }}>
+                <p>
+                    Welcome to the <b>D&D</b> roundup!
+                </p>
+            </header>
+            <Feed posts={posts!} />
+        </div>
+    );
+};
 
 export default App;
