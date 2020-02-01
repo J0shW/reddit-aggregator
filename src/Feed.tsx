@@ -3,12 +3,31 @@ import Snoowrap from 'snoowrap';
 import { Item, Icon } from 'semantic-ui-react';
 
 import './Feed.scss';
+import { Link } from 'react-router-dom';
 
-interface FeedProps {
-    posts: Snoowrap.Listing<Snoowrap.Submission>;
-}
+interface FeedProps {}
 
 const Feed: React.FC<FeedProps> = props => {
+    const [posts, setPosts] = React.useState<Snoowrap.Listing<Snoowrap.Submission>>();
+
+    React.useEffect(() => {
+        const reddit = new Snoowrap({
+            clientId: 'o4GxPeMIHdlxdg',
+            clientSecret: 'jK-vd2bFZT3UMNHPqAJyCo-B56Q',
+            userAgent: 'testing',
+            refreshToken: '31812939-DRfMXFUkv-Dz-gxkijgl--CL7sU',
+        });
+
+        reddit
+            .getSubreddit('DnDIY')
+            .getHot()
+            .then((posts: Snoowrap.Listing<Snoowrap.Submission>) => {
+                // do something with posts
+                setPosts(posts);
+                console.log(posts);
+            });
+    }, []);
+
     const getThumbnail = (post: any) => {
         if (post.thumbnail && post.thumbnail.substring(0, 4) === 'http') {
             return <Item.Image size="small" src={post.thumbnail} />;
@@ -16,12 +35,14 @@ const Feed: React.FC<FeedProps> = props => {
     };
 
     const renderPosts = () => {
-        return props.posts.map(post => {
+        return posts!.map(post => {
             return (
                 <Item>
                     {getThumbnail(post)}
                     <Item.Content>
-                        <Item.Header as="a">{post.title}</Item.Header>
+                        <Item.Header>
+                            <Link to={`posts/${post.id}`}>{post.title}</Link>
+                        </Item.Header>
                         <Item.Description>by: {post.author.name}</Item.Description>
                         <Item.Extra>
                             <Icon color="orange" name="arrow up" />
@@ -35,7 +56,7 @@ const Feed: React.FC<FeedProps> = props => {
         });
     };
 
-    return <Item.Group>{props.posts !== undefined ? renderPosts() : null}</Item.Group>;
+    return <Item.Group>{posts !== undefined ? renderPosts() : null}</Item.Group>;
 };
 
 export default Feed;
