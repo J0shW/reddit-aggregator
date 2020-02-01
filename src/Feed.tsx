@@ -1,6 +1,4 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronCircleUp, faChevronCircleDown } from '@fortawesome/free-solid-svg-icons';
 import Snoowrap from 'snoowrap';
 import { Item, Icon } from 'semantic-ui-react';
 
@@ -13,7 +11,6 @@ interface FeedProps {
 const Feed: React.FC<FeedProps> = props => {
     const getThumbnail = (post: any) => {
         if (post.thumbnail && post.thumbnail.substring(0, 4) === 'http') {
-            // return <img src={post.thumbnail} alt={post.title} />;
             return <Item.Image size="small" src={post.thumbnail} />;
         }
     };
